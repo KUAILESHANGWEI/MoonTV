@@ -3,6 +3,7 @@ set -euo pipefail
 
 REPO_URL="${MOONTV_REPO_URL:-https://github.com/KUAILESHANGWEI/MoonTV.git}"
 IMAGE="${MOONTV_IMAGE:-ghcr.io/kuileshangwei/moontv:latest}"
+USE_PREBUILT="${MOONTV_USE_PREBUILT:-0}"
 CONTAINER_NAME="${MOONTV_CONTAINER_NAME:-moontv}"
 HOST_PORT="${MOONTV_PORT:-3000}"
 PASSWORD="${PASSWORD:-}"
@@ -28,9 +29,9 @@ if [[ -z "$PASSWORD" ]]; then
   echo "Generated PASSWORD=$PASSWORD"
 fi
 
-if ! docker pull "$IMAGE"; then
+build_from_source() {
   if ! command -v git >/dev/null 2>&1; then
-    echo "Pulling $IMAGE failed and git is unavailable for source build fallback." >&2
+    echo "git is required to build MoonTV from $REPO_URL." >&2
     exit 1
   fi
 
@@ -42,6 +43,12 @@ if ! docker pull "$IMAGE"; then
 
   git clone --depth=1 "$REPO_URL" "$build_dir"
   docker build -t "$IMAGE" "$build_dir"
+}
+
+if [[ "$USE_PREBUILT" == "1" ]]; then
+  docker pull "$IMAGE" || build_from_source
+else
+  build_from_source
 fi
 
 if docker ps -a --format '{{.Names}}' | grep -qx "$CONTAINER_NAME"; then

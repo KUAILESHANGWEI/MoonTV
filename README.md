@@ -69,11 +69,11 @@
 
 - 仓库：`https://github.com/KUAILESHANGWEI/MoonTV`
 - 源码下载：`https://raw.githubusercontent.com/KUAILESHANGWEI/MoonTV/main/`
-- Docker 镜像：`ghcr.io/kuileshangwei/moontv:latest`
+- Docker 镜像名：`ghcr.io/kuileshangwei/moontv:latest`
 
 ### 一键安装 / 更新
 
-同一条命令可用于首次安装和后续更新。默认会拉取 `ghcr.io/kuileshangwei/moontv:latest`，如镜像暂不可用，会从 `KUAILESHANGWEI/MoonTV` 源码构建本地镜像。
+同一条命令可用于首次安装和后续更新。默认从 `KUAILESHANGWEI/MoonTV` 源码构建本地镜像，避免依赖任何上游仓库或上游 Release Assets。
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/KUAILESHANGWEI/MoonTV/main/install.sh | bash
@@ -83,6 +83,12 @@ curl -fsSL https://raw.githubusercontent.com/KUAILESHANGWEI/MoonTV/main/install.
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/KUAILESHANGWEI/MoonTV/main/install.sh | PASSWORD=your_password MOONTV_PORT=3000 bash
+```
+
+如需优先使用本仓库 GitHub Actions 发布的预构建镜像，可显式启用：
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/KUAILESHANGWEI/MoonTV/main/install.sh | MOONTV_USE_PREBUILT=1 bash
 ```
 
 存储支持矩阵
@@ -149,12 +155,14 @@ curl -fsSL https://raw.githubusercontent.com/KUAILESHANGWEI/MoonTV/main/install.
 #### 1. 直接运行（最简单，localstorage）
 
 ```bash
-# 拉取预构建镜像
-docker pull ghcr.io/kuileshangwei/moontv:latest
+# 从隔离仓库拉取源码并构建镜像
+git clone --depth=1 https://github.com/KUAILESHANGWEI/MoonTV.git
+cd MoonTV
+docker build -t moontv:latest .
 
 # 运行容器
 # -d: 后台运行  -p: 映射端口 3000 -> 3000
-docker run -d --name moontv -p 3000:3000 --env PASSWORD=your_password ghcr.io/kuileshangwei/moontv:latest
+docker run -d --name moontv -p 3000:3000 --env PASSWORD=your_password moontv:latest
 ```
 
 访问 `http://服务器 IP:3000` 即可。（需自行到服务器控制台放通 `3000` 端口）
@@ -168,7 +176,9 @@ docker run -d --name moontv -p 3000:3000 --env PASSWORD=your_password ghcr.io/ku
 ```yaml
 services:
   moontv:
-    image: ghcr.io/kuileshangwei/moontv:latest
+    build:
+      context: .
+    image: moontv:latest
     container_name: moontv
     restart: unless-stopped
     ports:
@@ -185,7 +195,9 @@ services:
 ```yaml
 services:
   moontv-core:
-    image: ghcr.io/kuileshangwei/moontv:latest
+    build:
+      context: .
+    image: moontv:latest
     container_name: moontv
     restart: unless-stopped
     ports:
