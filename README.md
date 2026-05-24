@@ -65,6 +65,26 @@
 
 本项目**支持 Vercel、Docker 和 Cloudflare** 部署。
 
+本仓库是 `KUAILESHANGWEI/MoonTV` 的非 Fork 隔离镜像。安装、更新、运行、构建和版本检查默认都指向：
+
+- 仓库：`https://github.com/KUAILESHANGWEI/MoonTV`
+- 源码下载：`https://raw.githubusercontent.com/KUAILESHANGWEI/MoonTV/main/`
+- Docker 镜像：`ghcr.io/kuileshangwei/moontv:latest`
+
+### 一键安装 / 更新
+
+同一条命令可用于首次安装和后续更新。默认会拉取 `ghcr.io/kuileshangwei/moontv:latest`，如镜像暂不可用，会从 `KUAILESHANGWEI/MoonTV` 源码构建本地镜像。
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/KUAILESHANGWEI/MoonTV/main/install.sh | bash
+```
+
+可选参数：
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/KUAILESHANGWEI/MoonTV/main/install.sh | PASSWORD=your_password MOONTV_PORT=3000 bash
+```
+
 存储支持矩阵
 
 |               | Docker | Vercel | Cloudflare |
@@ -84,12 +104,11 @@
 
 #### 普通部署（localstorage）
 
-1. **Fork** 本仓库到你的 GitHub 账户。
-2. 登陆 [Vercel](https://vercel.com/)，点击 **Add New → Project**，选择 Fork 后的仓库。
-3. 设置 PASSWORD 环境变量。
-4. 保持默认设置完成首次部署。
-5. 如需自定义 `config.json`，请直接修改 Fork 后仓库中该文件。
-6. 每次 Push 到 `main` 分支将自动触发重新构建。
+1. 登陆 [Vercel](https://vercel.com/)，点击 **Add New → Project**，导入 `KUAILESHANGWEI/MoonTV` 或你从该仓库创建的私有副本。
+2. 设置 PASSWORD 环境变量。
+3. 保持默认设置完成首次部署。
+4. 如需自定义 `config.json`，请直接修改部署仓库中该文件。
+5. 每次 Push 到 `main` 分支将自动触发重新构建。
 
 部署完成后即可通过分配的域名访问，也可以绑定自定义域名。
 
@@ -108,14 +127,13 @@
 
 #### 普通部署（localstorage）
 
-1. **Fork** 本仓库到你的 GitHub 账户。
-2. 登陆 [Cloudflare](https://cloudflare.com)，点击 **计算（Workers）-> Workers 和 Pages**，点击创建
-3. 选择 Pages，导入现有的 Git 存储库，选择 Fork 后的仓库
-4. 构建命令填写 **pnpm install --frozen-lockfile && pnpm run pages:build**，预设框架为无，**构建输出目录**为 `.vercel/output/static`
-5. 保持默认设置完成首次部署。进入设置，将兼容性标志设置为 `nodejs_compat`，无需选择，直接粘贴
-6. 首次部署完成后进入设置，新增 PASSWORD 密钥（变量和机密下），而后重试部署。
-7. 如需自定义 `config.json`，请直接修改 Fork 后仓库中该文件。
-8. 每次 Push 到 `main` 分支将自动触发重新构建。
+1. 登陆 [Cloudflare](https://cloudflare.com)，点击 **计算（Workers）-> Workers 和 Pages**，点击创建
+2. 选择 Pages，导入现有的 Git 存储库，选择 `KUAILESHANGWEI/MoonTV` 或你从该仓库创建的私有副本
+3. 构建命令填写 **pnpm install --frozen-lockfile && pnpm run pages:build**，预设框架为无，**构建输出目录**为 `.vercel/output/static`
+4. 保持默认设置完成首次部署。进入设置，将兼容性标志设置为 `nodejs_compat`，无需选择，直接粘贴
+5. 首次部署完成后进入设置，新增 PASSWORD 密钥（变量和机密下），而后重试部署。
+6. 如需自定义 `config.json`，请直接修改部署仓库中该文件。
+7. 每次 Push 到 `main` 分支将自动触发重新构建。
 
 #### D1 支持
 
@@ -132,11 +150,11 @@
 
 ```bash
 # 拉取预构建镜像
-docker pull ghcr.io/senshinya/moontv:latest
+docker pull ghcr.io/kuileshangwei/moontv:latest
 
 # 运行容器
 # -d: 后台运行  -p: 映射端口 3000 -> 3000
-docker run -d --name moontv -p 3000:3000 --env PASSWORD=your_password ghcr.io/senshinya/moontv:latest
+docker run -d --name moontv -p 3000:3000 --env PASSWORD=your_password ghcr.io/kuileshangwei/moontv:latest
 ```
 
 访问 `http://服务器 IP:3000` 即可。（需自行到服务器控制台放通 `3000` 端口）
@@ -150,7 +168,7 @@ docker run -d --name moontv -p 3000:3000 --env PASSWORD=your_password ghcr.io/se
 ```yaml
 services:
   moontv:
-    image: ghcr.io/senshinya/moontv:latest
+    image: ghcr.io/kuileshangwei/moontv:latest
     container_name: moontv
     restart: unless-stopped
     ports:
@@ -167,7 +185,7 @@ services:
 ```yaml
 services:
   moontv-core:
-    image: ghcr.io/senshinya/moontv:latest
+    image: ghcr.io/kuileshangwei/moontv:latest
     container_name: moontv
     restart: unless-stopped
     ports:
@@ -201,9 +219,9 @@ networks:
 
 ## 自动同步最近更改
 
-建议在 fork 的仓库中启用本仓库自带的 GitHub Actions 自动同步功能（见 `.github/workflows/sync.yml`）。
+本仓库不是 GitHub Fork。`.github/workflows/sync.yml` 会定时从上游镜像源拉取 `main` 分支，并在提交前重新应用本仓库的本地化链接。
 
-如需手动同步主仓库更新，也可以使用 GitHub 官方的 [Sync fork](https://docs.github.com/cn/github/collaborating-with-issues-and-pull-requests/syncing-a-fork) 功能。
+`.github/workflows/sync-release-assets.yml` 会定时同步上游当前最新 Release 的全部 Assets 到 `KUAILESHANGWEI/MoonTV` 的同名 Release。当前项目没有运行或构建必需的第三方 GitHub Release 资产；后续如新增这类资源，也应先同步到本仓库 Release，再在项目中引用本仓库地址。
 
 ## 环境变量
 

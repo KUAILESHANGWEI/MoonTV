@@ -2,7 +2,7 @@
 
 'use client';
 
-const CURRENT_VERSION = '20250804231933';
+const CURRENT_VERSION = '20260524080218';
 
 // 版本检查结果枚举
 export enum UpdateStatus {
@@ -13,8 +13,8 @@ export enum UpdateStatus {
 
 // 远程版本检查URL配置
 const VERSION_CHECK_URLS = [
-  'https://ghfast.top/raw.githubusercontent.com/senshinya/MoonTV/main/VERSION.txt',
-  'https://raw.githubusercontent.com/senshinya/MoonTV/main/VERSION.txt',
+  'https://raw.githubusercontent.com/KUAILESHANGWEI/MoonTV/main/VERSION.txt',
+  'https://github.com/KUAILESHANGWEI/MoonTV/raw/main/VERSION.txt',
 ];
 
 /**
