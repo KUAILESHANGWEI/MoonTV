@@ -59,11 +59,12 @@ jobs:
 
       - name: Commit and push changes
         run: |
-          if git diff --quiet; then
-            echo "No upstream changes to push."
-            exit 0
+          if ! git diff --quiet; then
+            git add -A
+            git commit -m "chore: sync upstream and keep localized links"
           fi
-
-          git add -A
-          git commit -m "chore: sync upstream and keep localized links"
-          git push origin HEAD:main
+          if [ "$(git rev-parse HEAD)" != "$(git rev-parse origin/main)" ]; then
+            git push origin HEAD:main
+          else
+            echo "No upstream changes to push."
+          fi
